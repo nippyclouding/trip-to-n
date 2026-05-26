@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import server.TripToN.global.error.BusinessException;
+import server.TripToN.global.util.ClientIpResolver;
 import server.TripToN.global.util.Const;
 import server.TripToN.member.dto.sign.SignInRequestDto;
 import server.TripToN.member.dto.sign.SignUpEmailCheckRequestDto;
@@ -81,7 +82,7 @@ public class MemberAuthController {
             return "redirect:/";
         }
 
-        String loginTryIp = extractClientIp(request);
+        String loginTryIp = ClientIpResolver.resolve(request);
         Member member = memberAuthService.signIn(dto, loginTryIp);
         if (member != null) {
             session.setAttribute(Const.MEMBER_SESSION_KEY, member.getMemberId());
@@ -102,10 +103,6 @@ public class MemberAuthController {
     }
 
     // 회원탈퇴
-
-    private String extractClientIp(HttpServletRequest request) {
-        return request.getRemoteAddr();
-    }
 
     private void addAuthFormFlashAttributes(RedirectAttributes attributes,
                                             String authTab,
